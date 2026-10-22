@@ -1,0 +1,14 @@
+{
+  "name": "mongo-survey-stage1",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "基于 MongoDB 的问卷系统 阶段一",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "start": "node --env-file-if-exists=.env src/server.js",
+    "test": "node --env-file-if-exists=.env --test --test-concurrency=1 test/*.test.js",
+    "seed": "node --env-file-if-exists=.env scripts/seed.js"
+  },
+  "dependencies": { "mongodb": "^6.21.0" }
+}
