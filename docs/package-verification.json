@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-29",
+  "cleanExtraction": true,
+  "lockedDependencyInstall": true,
+  "entryPoint": "node --env-file-if-exists=.env src/server.js",
+  "checks": [
+    "干净解压、锁定依赖安装、配置复制及真实启动入口通过",
+    "真实HTTP完成注册、常用题创建、导入、发布、匿名提交与跨卷频数统计",
+    "真实MongoDB回答保存匿名标记与可信版本来源"
+  ],
+  "result": "passed"
+}

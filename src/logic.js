@@ -52,7 +52,13 @@ export function validateDefinition(input) {
       if (['includesAny', 'includesAll'].includes(r.op)) check(Array.isArray(r.value) && r.value.length > 0 && new Set(r.value).size === r.value.length && r.value.every(id => options.some(o => o.id === id)), '多选跳转条件无效');
       return { op: r.op, value: r.value, target: r.target };
     });
-    return { id: q.id, title: q.title.trim(), type: q.type, required: q.required === true, options, validation: v, rules: cleanRules };
+    const source = {};
+    if (q.sourceFamilyId !== undefined || q.sourceVersionId !== undefined) {
+      check(typeof q.sourceFamilyId === 'string' && /^[a-f0-9]{24}$/i.test(q.sourceFamilyId) && typeof q.sourceVersionId === 'string' && /^[a-f0-9]{24}$/i.test(q.sourceVersionId), '题目来源必须同时包含有效的题目族和版本ID');
+      source.sourceFamilyId = q.sourceFamilyId.toLowerCase();
+      source.sourceVersionId = q.sourceVersionId.toLowerCase();
+    }
+    return { id: q.id, title: q.title.trim(), type: q.type, required: q.required === true, options, validation: v, rules: cleanRules, ...source };
   });
   return { title: input.title.trim(), description: input.description ?? '', allowAnonymous: input.allowAnonymous === true, allowMultiple: input.allowMultiple === true, deadline, questions };
 }
@@ -137,7 +143,7 @@ export function evaluateAnswers(survey, answers) {
     const q = survey.questions[index];
     path.push(q.id);
     const value = validateAnswer(q, Object.hasOwn(answers, q.id) ? answers[q.id] : undefined);
-    normalized.push({ questionId: q.id, type: q.type, value });
+    normalized.push({ questionId: q.id, type: q.type, value, ...(q.sourceVersionId && q.sourceFamilyId ? { sourceFamilyId: q.sourceFamilyId, sourceVersionId: q.sourceVersionId } : {}) });
     index = nextQuestion(survey.questions, index, value);
   }
   check(Object.keys(answers).every(id => path.includes(id)), '包含被跳过题目的答案，请刷新填写路径');

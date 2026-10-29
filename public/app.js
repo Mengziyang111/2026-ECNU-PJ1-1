@@ -1,5 +1,6 @@
 import { validateAnswer, nextQuestion, evaluateAnswers, pruneUnreachableAnswers } from '/logic.js';
 import { demoDefinition } from '/demo.js';
+import { createLibraryUI } from '/library.js';
 
 const $ = s => document.querySelector(s);
 const e = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -15,7 +16,8 @@ async function api(path, method = 'GET', data) {
   if (!response.ok) throw new Error(result.error ?? `请求失败 ${response.status}`);
   return result;
 }
-function nav() { $('#nav').innerHTML = state.user ? `<a class="quiet" href="/">我的问卷</a><span class="small muted">${e(state.user.username)}</span><button class="quiet small" data-action="logout">退出</button>` : '<span class="small muted">在线问卷与结果统计</span>'; }
+const library = createLibraryUI({ api, escape: e, toast });
+function nav() { $('#nav').innerHTML = state.user ? `<a class="quiet" href="/">我的问卷</a><a class="quiet" href="/#library">题目</a><a class="quiet" href="/#banks">题库</a><span class="small muted">${e(state.user.username)}</span><button class="quiet small" data-action="logout">退出</button>` : '<span class="small muted">在线问卷与结果统计</span>'; }
 function errorPage(message) { $('#app').innerHTML = `<div class="panel empty"><h2>暂时无法继续</h2><p>${e(message)}</p><a class="button secondary" href="/">返回我的问卷</a></div>`; }
 function authView() {
   nav();
@@ -39,12 +41,13 @@ function ruleHTML(q, r, ri, qi, locked) {
 }
 function questionHTML(q, qi, locked) {
   const options = ['single', 'multiple'].includes(q.type);
+  const referenced = Boolean(q.sourceVersionId), contentLocked = locked || referenced;
   const constraints = q.type === 'multiple' ? [['minChoices', '最少选择'], ['maxChoices', '最多选择'], ['exactChoices', '固定选择数量']] : q.type === 'text' ? [['minLength', '最少字数'], ['maxLength', '最多字数']] : q.type === 'number' ? [['min', '最小数值'], ['max', '最大数值']] : [];
-  return `<section class="panel q-editor" data-question="${qi}" id="question-${qi}"><div class="q-head"><span class="q-number">QUESTION ${String(qi + 1).padStart(2, '0')}</span>${locked ? '' : `<button class="quiet danger" data-action="remove-question" data-q="${qi}">删除题目</button>`}</div><fieldset ${locked ? 'disabled' : ''} class="fieldset"><div class="form-grid">${field('题目标题', `<input data-q-title value="${e(q.title)}" maxlength="300" required>`)}${field('题目类型', `<select data-q-type data-action="question-type" data-q="${qi}">${Object.entries(types).map(([value, label]) => `<option value="${value}" ${q.type === value ? 'selected' : ''}>${label}</option>`).join('')}</select>`)}</div><label class="check"><input data-q-required type="checkbox" ${q.required ? 'checked' : ''}>设为必答题</label>${options ? `<div class="top-space"><label>选项</label>${q.options.map((o, oi) => `<div class="option-row" data-option="${e(o.id)}"><span class="small muted">${String.fromCharCode(65 + oi)}</span><input aria-label="选项${oi + 1}" data-option-label value="${e(o.label)}" maxlength="200" required>${locked ? '' : `<button class="quiet" data-action="remove-option" data-q="${qi}" data-oi="${oi}" aria-label="删除选项">×</button>`}</div>`).join('')}${locked ? '' : `<button class="quiet small" data-action="add-option" data-q="${qi}">＋ 添加选项</button>`}</div>` : ''}${constraints.length ? `<div class="form-grid top-space">${constraints.map(([key, label]) => field(label, `<input data-v="${key}" type="number" ${q.type !== 'number' ? 'min="0" step="1"' : 'step="any"'} value="${e(q.validation[key] ?? '')}" placeholder="不限">`)).join('')}</div>` : ''}${q.type === 'number' ? `<label class="check"><input data-v-integer type="checkbox" ${q.validation.integer ? 'checked' : ''}>只允许整数</label>` : ''}${q.type !== 'text' ? `<div class="rules"><div class="row between"><label class="no-margin">根据回答跳转</label>${locked ? '' : `<button class="quiet small" data-action="add-rule" data-q="${qi}">＋ 添加规则</button>`}</div><p class="hint">从上到下匹配，命中第一条后跳转；未命中则进入下一题。仅允许向后跳转。${q.type === 'multiple' ? '多选条件中的多项选择可按住 Ctrl 点选。' : ''}</p>${q.rules.map((r, ri) => ruleHTML(q, r, ri, qi, locked)).join('')}</div>` : ''}</fieldset></section>`;
+  return `<section class="panel q-editor" data-question="${qi}" id="question-${qi}"><div class="q-head"><span class="q-number">QUESTION ${String(qi + 1).padStart(2, '0')}</span><div class="row"><button class="quiet small" data-action="save-library-question" data-q="${qi}">另存到常用题</button>${locked ? '' : `<button class="quiet danger" data-action="remove-question" data-q="${qi}">删除题目</button>`}</div></div>${referenced ? `<div class="library-source"><span class="badge published">引用固定题目版本</span><a href="#library/${e(q.sourceFamilyId)}">查看版本与统计</a><p class="hint no-margin">题目内容保持选用时的版本。要更改内容，请在版本页创建新版本，再从题库选用；本问卷仍可独立配置跳转。</p></div>` : ''}<fieldset ${contentLocked ? 'disabled' : ''} class="fieldset"><div class="form-grid">${field('题目标题', `<input data-q-title value="${e(q.title)}" maxlength="300" required>`)}${field('题目类型', `<select data-q-type data-action="question-type" data-q="${qi}">${Object.entries(types).map(([value, label]) => `<option value="${value}" ${q.type === value ? 'selected' : ''}>${label}</option>`).join('')}</select>`)}</div><label class="check"><input data-q-required type="checkbox" ${q.required ? 'checked' : ''}>设为必答题</label>${options ? `<div class="top-space"><label>选项</label>${q.options.map((o, oi) => `<div class="option-row" data-option="${e(o.id)}"><span class="small muted">${String.fromCharCode(65 + oi)}</span><input aria-label="选项${oi + 1}" data-option-label value="${e(o.label)}" maxlength="200" required>${contentLocked ? '' : `<button class="quiet" data-action="remove-option" data-q="${qi}" data-oi="${oi}" aria-label="删除选项">×</button>`}</div>`).join('')}${contentLocked ? '' : `<button class="quiet small" data-action="add-option" data-q="${qi}">＋ 添加选项</button>`}</div>` : ''}${constraints.length ? `<div class="form-grid top-space">${constraints.map(([key, label]) => field(label, `<input data-v="${key}" type="number" ${q.type !== 'number' ? 'min="0" step="1"' : 'step="any"'} value="${e(q.validation[key] ?? '')}" placeholder="不限">`)).join('')}</div>` : ''}${q.type === 'number' ? `<label class="check"><input data-v-integer type="checkbox" ${q.validation.integer ? 'checked' : ''}>只允许整数</label>` : ''}</fieldset>${q.type !== 'text' ? `<fieldset ${locked ? 'disabled' : ''} class="fieldset rules"><div class="row between"><label class="no-margin">根据回答跳转</label>${locked ? '' : `<button class="quiet small" data-action="add-rule" data-q="${qi}">＋ 添加规则</button>`}</div><p class="hint">从上到下匹配，命中第一条后跳转；未命中则进入下一题。仅允许向后跳转。${q.type === 'multiple' ? '多选条件中的多项选择可按住 Ctrl 点选。' : ''}</p>${q.rules.map((r, ri) => ruleHTML(q, r, ri, qi, locked)).join('')}</fieldset>` : ''}</section>`;
 }
 function editorView() {
   const s = state.editor, locked = s.status !== 'draft';
-  $('#app').innerHTML = `<a class="back" href="#">← 我的问卷</a><div class="section-head"><div><div class="eyebrow">问卷编辑</div><h1>${e(s.title)}</h1><span class="badge ${s.status}">${statusNames[s.status]}</span>${locked ? '<span class="locked">　发布后内容已锁定</span>' : ''}</div><div class="row">${locked ? `<button class="secondary" data-action="copy" data-id="${s._id}">复制填写链接</button>${s.status === 'published' ? '<button class="danger" data-action="close">关闭问卷</button>' : ''}` : '<button class="secondary" data-action="save">保存草稿</button><button data-action="publish">发布问卷</button>'}</div></div><p id="form-error" class="error" role="alert"></p><div class="editor-layout"><aside class="panel editor-sidebar"><h3>问卷目录</h3><a href="#" data-action="scroll-settings">问卷设置</a>${s.questions.map((q, i) => `<a href="#" data-action="scroll-question" data-q="${i}">${i + 1}. ${e(q.title || '未命名题目')}</a>`).join('')}<hr><p class="hint">${s.questions.length} 道题目<br>${locked ? '发布后的问卷保持原始内容。' : '保存草稿后再发布，即可分享填写链接。'}</p>${locked ? `<a class="button secondary" href="#stats/${s._id}">查看统计</a>` : '<button class="secondary" data-action="add-question">＋ 添加题目</button>'}</aside><div class="editor-main"><section class="panel" id="settings"><h2>问卷设置</h2><fieldset ${locked ? 'disabled' : ''} class="fieldset">${field('问卷标题', `<input id="survey-title" value="${e(s.title)}" maxlength="120" required>`)}${field('问卷说明', `<textarea id="survey-description" maxlength="3000">${e(s.description)}</textarea>`)}<div class="form-grid">${field('截止时间', `<input id="survey-deadline" type="datetime-local" value="${localDate(s.deadline)}">`, '留空表示不限时；按本机时区填写。')}<div class="field"><label>填写设置</label><label class="check"><input id="survey-anonymous" type="checkbox" ${s.allowAnonymous ? 'checked' : ''}>允许匿名提交</label><label class="check"><input id="survey-multiple" type="checkbox" ${s.allowMultiple ? 'checked' : ''}>允许同一账号多次填写</label></div></div><p class="hint">所有填写者都需要先登录。匿名提交后，统计结果不显示账号。</p></fieldset></section>${s.questions.map((q, qi) => questionHTML(q, qi, locked)).join('')}${locked ? '' : '<button class="secondary" data-action="add-question">＋ 添加下一道题目</button>'}</div></div>`;
+  $('#app').innerHTML = `<a class="back" href="#">← 我的问卷</a><div class="section-head"><div><div class="eyebrow">问卷编辑</div><h1>${e(s.title)}</h1><span class="badge ${s.status}">${statusNames[s.status]}</span>${locked ? '<span class="locked">　发布后内容已锁定</span>' : ''}</div><div class="row">${locked ? `<button class="secondary" data-action="copy" data-id="${s._id}">复制填写链接</button>${s.status === 'published' ? '<button class="danger" data-action="close">关闭问卷</button>' : ''}` : '<button class="secondary" data-action="save">保存草稿</button><button data-action="publish">发布问卷</button>'}</div></div><p id="form-error" class="error" role="alert"></p><div class="editor-layout"><aside class="panel editor-sidebar"><h3>问卷目录</h3><a href="#" data-action="scroll-settings">问卷设置</a>${s.questions.map((q, i) => `<a href="#" data-action="scroll-question" data-q="${i}">${i + 1}. ${e(q.title || '未命名题目')}</a>`).join('')}<hr><p class="hint">${s.questions.length} 道题目<br>${locked ? '发布后的问卷保持原始内容。' : '保存草稿后再发布，即可分享填写链接。'}</p>${locked ? `<a class="button secondary" href="#stats/${s._id}">查看统计</a>` : '<div class="library-editor-buttons"><button class="secondary" data-action="add-question">＋ 添加题目</button><button class="secondary" data-action="pick-library">从题库选题</button></div>'}</aside><div class="editor-main"><section class="panel" id="settings"><h2>问卷设置</h2><fieldset ${locked ? 'disabled' : ''} class="fieldset">${field('问卷标题', `<input id="survey-title" value="${e(s.title)}" maxlength="120" required>`)}${field('问卷说明', `<textarea id="survey-description" maxlength="3000">${e(s.description)}</textarea>`)}<div class="form-grid">${field('截止时间', `<input id="survey-deadline" type="datetime-local" value="${localDate(s.deadline)}">`, '留空表示不限时；按本机时区填写。')}<div class="field"><label>填写设置</label><label class="check"><input id="survey-anonymous" type="checkbox" ${s.allowAnonymous ? 'checked' : ''}>允许匿名提交</label><label class="check"><input id="survey-multiple" type="checkbox" ${s.allowMultiple ? 'checked' : ''}>允许同一账号多次填写</label></div></div><p class="hint">所有填写者都需要先登录。匿名提交后，统计结果不显示账号。</p></fieldset></section>${s.questions.map((q, qi) => questionHTML(q, qi, locked)).join('')}${locked ? '' : '<div class="row"><button class="secondary" data-action="add-question">＋ 添加下一道题目</button><button class="secondary" data-action="pick-library">从题库选题</button></div>'}</div></div>`;
 }
 function collectEditor() {
   const s = state.editor;
@@ -54,11 +57,13 @@ function collectEditor() {
   s.allowAnonymous = $('#survey-anonymous').checked; s.allowMultiple = $('#survey-multiple').checked;
   document.querySelectorAll('[data-question]').forEach(card => {
     const q = s.questions[Number(card.dataset.question)];
-    q.title = card.querySelector('[data-q-title]').value; q.required = card.querySelector('[data-q-required]').checked;
-    q.options = [...card.querySelectorAll('[data-option]')].map(row => ({ id: row.dataset.option, label: row.querySelector('input').value }));
-    q.validation = {};
-    card.querySelectorAll('[data-v]').forEach(input => { if (input.value !== '') q.validation[input.dataset.v] = Number(input.value); });
-    if (card.querySelector('[data-v-integer]')) q.validation.integer = card.querySelector('[data-v-integer]').checked;
+    if (!q.sourceVersionId) {
+      q.title = card.querySelector('[data-q-title]').value; q.required = card.querySelector('[data-q-required]').checked;
+      q.options = [...card.querySelectorAll('[data-option]')].map(row => ({ id: row.dataset.option, label: row.querySelector('input').value }));
+      q.validation = {};
+      card.querySelectorAll('[data-v]').forEach(input => { if (input.value !== '') q.validation[input.dataset.v] = Number(input.value); });
+      if (card.querySelector('[data-v-integer]')) q.validation.integer = card.querySelector('[data-v-integer]').checked;
+    }
     q.rules = [...card.querySelectorAll('[data-rule]')].map(row => {
       const op = row.querySelector('[data-r-op]').value, input = row.querySelector('[data-r-value]');
       const value = q.type === 'number' ? (input.value === '' ? null : Number(input.value)) : ['includesAny', 'includesAll'].includes(op) ? [...input.selectedOptions].map(o => o.value) : input.value;
@@ -108,20 +113,26 @@ async function route() {
     const [view, id] = location.hash.slice(1).split('/');
     if (view === 'edit' && id) { state.editor = await api('/surveys/' + id); editorView(); }
     else if (view === 'stats' && id) await statistics(id);
-    else await dashboard();
+    else if (!await library.route(view, id)) await dashboard();
   } catch (error) { errorPage(error.message); }
 }
 function uid(prefix) { return prefix + '_' + crypto.randomUUID().slice(0, 8); }
 document.addEventListener('submit', async event => {
-  if (event.target.id !== 'auth-form') return;
+  if (event.target.id !== 'auth-form' && !['library-question-form', 'library-sharing-form', 'library-bank-form'].includes(event.target.id)) return;
   event.preventDefault();
+  if (state.busy) return;
+  state.busy = true;
   const button = event.target.querySelector('button[type=submit]'); button.disabled = true;
-  try { state.user = await api('/auth/' + state.authMode, 'POST', { username: $('#username').value, password: $('#password').value }); await route(); }
-  catch (error) { $('#form-error').textContent = error.message; }
-  finally { button.disabled = false; }
+  try {
+    if (event.target.id === 'auth-form') { state.user = await api('/auth/' + state.authMode, 'POST', { username: $('#username').value, password: $('#password').value }); await route(); }
+    else await library.submit(event.target);
+  }
+  catch (error) { if ($('#form-error')) $('#form-error').textContent = error.message; toast(error.message); }
+  finally { state.busy = false; button.disabled = false; }
 });
 async function action(name, target) {
   const qi = Number(target.dataset.q), ri = Number(target.dataset.ri);
+  if (await library.action(name, target)) return;
   if (name === 'auth-toggle') { state.authMode = state.authMode === 'login' ? 'register' : 'login'; authView(); return; }
   if (name === 'logout') { await api('/auth/logout', 'POST', {}); state.user = null; await route(); return; }
   if (name === 'refresh') { await route(); return; }
@@ -155,6 +166,11 @@ async function action(name, target) {
     $('#app').innerHTML = '<div class="fill-wrap panel success"><div class="success-mark">✓</div><h1>回答已收到</h1><p class="muted">感谢你的认真填写，每一个回答都已保存。</p><a class="button secondary" href="/">返回我的问卷</a></div>'; return;
   }
   if (name === 'save') { await saveEditor(); toast('草稿已保存'); return; }
+  if (name === 'pick-library') { await saveEditor(); location.hash = 'pick/' + state.editor._id; return; }
+  if (name === 'save-library-question') {
+    if (state.editor.status === 'draft') await saveEditor();
+    await library.saveSurveyQuestion(state.editor.questions[qi]); return;
+  }
   if (name === 'publish') { await saveEditor(); await api(`/surveys/${state.editor._id}/publish`, 'POST', {}); toast('发布成功，可以复制链接邀请填写'); await route(); return; }
   if (name === 'close') { await api(`/surveys/${state.editor._id}/close`, 'POST', {}); toast('问卷已关闭'); await route(); return; }
   collectEditor();

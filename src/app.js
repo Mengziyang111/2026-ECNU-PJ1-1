@@ -7,6 +7,7 @@ import { check, HttpError } from './errors.js';
 import { hashPassword, verifyPassword, newToken, sha256 } from './auth.js';
 import { validateDefinition, evaluateAnswers } from './logic.js';
 import { surveyStatistics } from './statistics.js';
+import { handleLibraryRoute, validateSourceReferences } from './library.js';
 
 const publicRoot = fileURLToPath(new URL('../public/', import.meta.url));
 function oid(value) { check(/^[a-f0-9]{24}$/i.test(value), 'ID无效'); return new ObjectId(value); }
@@ -36,11 +37,12 @@ export function createApplication(db) {
     res.setHeader('Referrer-Policy', 'same-origin');
     res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'");
     try {
-      const path = new URL(req.url, 'http://localhost').pathname;
+      const url = new URL(req.url, 'http://localhost');
+      const path = url.pathname;
       const method = req.method;
       if (!path.startsWith('/api/')) {
         check(method === 'GET', '页面仅支持GET', 405);
-        const asset = { '/app.js': ['app.js', 'text/javascript'], '/style.css': ['style.css', 'text/css'], '/favicon.svg': ['favicon.svg', 'image/svg+xml'], '/logic.js': ['../src/logic.js', 'text/javascript'], '/errors.js': ['../src/errors.js', 'text/javascript'], '/demo.js': ['../scripts/demo.js', 'text/javascript'] }[path];
+        const asset = { '/app.js': ['app.js', 'text/javascript'], '/library.js': ['library.js', 'text/javascript'], '/style.css': ['style.css', 'text/css'], '/favicon.svg': ['favicon.svg', 'image/svg+xml'], '/logic.js': ['../src/logic.js', 'text/javascript'], '/errors.js': ['../src/errors.js', 'text/javascript'], '/demo.js': ['../scripts/demo.js', 'text/javascript'] }[path];
         check(asset || path === '/' || /^\/survey\/[a-f0-9]{24}$/.test(path), '页面不存在', 404);
         const [name, mime] = asset ?? ['index.html', 'text/html'];
         res.writeHead(200, { 'Content-Type': `${mime}; charset=utf-8`, 'Cache-Control': 'no-cache' });
@@ -82,6 +84,7 @@ export function createApplication(db) {
         if (token) await db.collection('sessions').deleteOne({ tokenHash: sha256(token) });
         send(res, 200, { ok: true }, { 'Set-Cookie': 'sid=; HttpOnly; SameSite=Lax; Path=/; Max-Age=0' }); return;
       }
+      if (await handleLibraryRoute({ db, user, req, res, url, send, readBody: body })) return;
       if (path === '/api/surveys' && method === 'GET') {
         const surveys = await db.collection('surveys').find({ ownerId: user._id }, { projection: { anonymousSalt: 0, questions: 0 } }).sort({ createdAt: -1 }).toArray();
         const counts = await db.collection('responses').aggregate([{ $match: { surveyId: { $in: surveys.map(s => s._id) } } }, { $group: { _id: '$surveyId', count: { $sum: 1 } } }]).toArray();
@@ -89,6 +92,7 @@ export function createApplication(db) {
       }
       if (path === '/api/surveys' && method === 'POST') {
         const definition = validateDefinition(await body(req));
+        await validateSourceReferences(db, user, definition);
         const survey = { ...definition, ownerId: user._id, status: 'draft', revision: 1, anonymousSalt: randomBytes(32).toString('hex'), createdAt: new Date(), updatedAt: new Date() };
         const result = await db.collection('surveys').insertOne(survey);
         send(res, 201, publicSurvey({ ...survey, _id: result.insertedId })); return;
@@ -127,6 +131,7 @@ export function createApplication(db) {
           check(survey.status === 'draft', '已发布或关闭的问卷不能修改，请新建问卷', 409);
           const input = await body(req), definition = validateDefinition(input);
           check(input.expectedRevision === survey.revision, '草稿被其他窗口修改，请刷新', 409);
+          await validateSourceReferences(db, user, definition, survey);
           const updated = await db.collection('surveys').findOneAndUpdate({ _id: survey._id, status: 'draft', revision: input.expectedRevision }, { $set: { ...definition, updatedAt: new Date() }, $inc: { revision: 1 } }, { returnDocument: 'after' });
           check(updated, '草稿版本或状态已改变，请刷新', 409);
           send(res, 200, publicSurvey(updated)); return;

@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-29",
+  "fixture": "generated-by-original-stage-one-application",
+  "server": "MongoDB 8.2.12 standalone",
+  "migratedQuestions": 5,
+  "preservedResponses": 1,
+  "backupRoundTrip": true,
+  "noOriginalBusinessDatabaseAccessed": true,
+  "checks": [
+    "原阶段一程序生成4集合数据；CLI只读预览后集合与BSON文档完全不变",
+    "正式CLI在创建新集合之前生成可解码的原库全量ExtendedJSON备份",
+    "原ID、revision、状态、日期、规则、path、答案、匿名与去重凭证等值保留，仅补来源",
+    "重复运行正式CLI时迁移量为0，全部7集合文档保持不变",
+    "原备份恢复到全新库后阶段二应用可读取原会话、问卷与回答，数字统计仍为4"
+  ],
+  "result": "passed"
+}

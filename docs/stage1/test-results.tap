@@ -1,0 +1,275 @@
+
+> mongo-survey-stage1@1.0.0 test
+> node --env-file-if-exists=.env --test --test-concurrency=1 test/*.test.js
+
+.env not found. Continuing without it.
+TAP version 13
+# .env not found. Continuing without it.
+# Subtest: A01 首页、静态文件与MongoDB健康检查
+ok 1 - A01 首页、静态文件与MongoDB健康检查
+  ---
+  duration_ms: 213.6261
+  type: 'test'
+  ...
+# Subtest: A02 注册密码哈希、HttpOnly会话与唯一用户名
+ok 2 - A02 注册密码哈希、HttpOnly会话与唯一用户名
+  ---
+  duration_ms: 39.2776
+  type: 'test'
+  ...
+# Subtest: A03 登录成功、错误密码与注销失效
+ok 3 - A03 登录成功、错误密码与注销失效
+  ---
+  duration_ms: 79.8659
+  type: 'test'
+  ...
+# Subtest: A04 未登录用户禁止创建、列表及填写
+ok 4 - A04 未登录用户禁止创建、列表及填写
+  ---
+  duration_ms: 9.8964
+  type: 'test'
+  ...
+# Subtest: A05 创建及保存题目、乐观锁防止草稿覆盖
+ok 5 - A05 创建及保存题目、乐观锁防止草稿覆盖
+  ---
+  duration_ms: 8.9111
+  type: 'test'
+  ...
+# Subtest: A06 只能查看自己问卷，跨用户读写及统计被拒
+ok 6 - A06 只能查看自己问卷，跨用户读写及统计被拒
+  ---
+  duration_ms: 13.315
+  type: 'test'
+  ...
+# Subtest: A07 空问卷与已过截止时间不能发布
+ok 7 - A07 空问卷与已过截止时间不能发布
+  ---
+  duration_ms: 10.5957
+  type: 'test'
+  ...
+# Subtest: A08 发布后定义锁定且不泄露匿名盐
+ok 8 - A08 发布后定义锁定且不泄露匿名盐
+  ---
+  duration_ms: 8.7119
+  type: 'test'
+  ...
+# Subtest: A09 合法跳转提交真实落库、非法跳过答案拒绝
+ok 9 - A09 合法跳转提交真实落库、非法跳过答案拒绝
+  ---
+  duration_ms: 11.9965
+  type: 'test'
+  ...
+# Subtest: A10 匿名回答不保存respondentId，禁止匿名设置生效
+ok 10 - A10 匿名回答不保存respondentId，禁止匿名设置生效
+  ---
+  duration_ms: 16.9021
+  type: 'test'
+  ...
+# Subtest: A11 不允许重复时并发8次只保存1份且匿名不能绕过
+ok 11 - A11 不允许重复时并发8次只保存1份且匿名不能绕过
+  ---
+  duration_ms: 25.7391
+  type: 'test'
+  ...
+# Subtest: A12 允许重复时同账号可再次提交
+ok 12 - A12 允许重复时同账号可再次提交
+  ---
+  duration_ms: 12.1909
+  type: 'test'
+  ...
+# Subtest: A13 截止与关闭问卷拒绝查看及提交，保留统计
+ok 13 - A13 截止与关闭问卷拒绝查看及提交，保留统计
+  ---
+  duration_ms: 23.3259
+  type: 'test'
+  ...
+# Subtest: A14 单选、多选、文本和数字平均数统计正确
+ok 14 - A14 单选、多选、文本和数字平均数统计正确
+  ---
+  duration_ms: 16.8381
+  type: 'test'
+  ...
+# Subtest: A15 版本不符、格式错误与跨域写入被拒
+ok 15 - A15 版本不符、格式错误与跨域写入被拒
+  ---
+  duration_ms: 9.3205
+  type: 'test'
+  ...
+# Subtest: A16 多人同时填写互不覆盖且名单计数正确
+ok 16 - A16 多人同时填写互不覆盖且名单计数正确
+  ---
+  duration_ms: 50.5015
+  type: 'test'
+  ...
+# Subtest: A17 MongoDB集合验证器与唯一索引存在并生效
+ok 17 - A17 MongoDB集合验证器与唯一索引存在并生效
+  ---
+  duration_ms: 2.3315
+  type: 'test'
+  ...
+# Subtest: A18 数据库重新连接后已提交数据仍存在
+ok 18 - A18 数据库重新连接后已提交数据仍存在
+  ---
+  duration_ms: 21.3609
+  type: 'test'
+  ...
+# .env not found. Continuing without it.
+# Subtest: L01 单选跳转：被跳过的必答题不校验
+ok 19 - L01 单选跳转：被跳过的必答题不校验
+  ---
+  duration_ms: 1.5301
+  type: 'test'
+  ...
+# Subtest: L02 多选跳转：AI选项跳过学习方式题
+ok 20 - L02 多选跳转：AI选项跳过学习方式题
+  ---
+  duration_ms: 0.2062
+  type: 'test'
+  ...
+# Subtest: L03 数值跳转：达到8小时提前结束
+ok 21 - L03 数值跳转：达到8小时提前结束
+  ---
+  duration_ms: 0.1602
+  type: 'test'
+  ...
+# Subtest: L04 未匹配规则时顺序进入下一题
+ok 22 - L04 未匹配规则时顺序进入下一题
+  ---
+  duration_ms: 0.5911
+  type: 'test'
+  ...
+# Subtest: L05 拒绝伪造被跳过题目的答案
+ok 23 - L05 拒绝伪造被跳过题目的答案
+  ---
+  duration_ms: 0.3444
+  type: 'test'
+  ...
+# Subtest: L06 拒绝遗漏当前路径上的必答题
+ok 24 - L06 拒绝遗漏当前路径上的必答题
+  ---
+  duration_ms: 0.1108
+  type: 'test'
+  ...
+# Subtest: L07 拒绝不存在题目的答案
+ok 25 - L07 拒绝不存在题目的答案
+  ---
+  duration_ms: 0.1309
+  type: 'test'
+  ...
+# Subtest: L08 单选拒绝不存在的选项
+ok 26 - L08 单选拒绝不存在的选项
+  ---
+  duration_ms: 0.0925
+  type: 'test'
+  ...
+# Subtest: L09 多选数量边界与重复选项
+ok 27 - L09 多选数量边界与重复选项
+  ---
+  duration_ms: 0.268
+  type: 'test'
+  ...
+# Subtest: L10 多选支持固定选择数量
+ok 28 - L10 多选支持固定选择数量
+  ---
+  duration_ms: 0.3052
+  type: 'test'
+  ...
+# Subtest: L11 数值支持范围、整数、有限数检查
+ok 29 - L11 数值支持范围、整数、有限数检查
+  ---
+  duration_ms: 0.1893
+  type: 'test'
+  ...
+# Subtest: L12 文本长度与全空格必答校验
+ok 30 - L12 文本长度与全空格必答校验
+  ---
+  duration_ms: 0.109
+  type: 'test'
+  ...
+# Subtest: L13 非必答空值不触发最小长度限制
+ok 31 - L13 非必答空值不触发最小长度限制
+  ---
+  duration_ms: 0.0533
+  type: 'test'
+  ...
+# Subtest: L14 拒绝后向或不存在目标，防止循环
+ok 32 - L14 拒绝后向或不存在目标，防止循环
+  ---
+  duration_ms: 0.075
+  type: 'test'
+  ...
+# Subtest: L15 拒绝冲突的校验范围与重复题目ID
+ok 33 - L15 拒绝冲突的校验范围与重复题目ID
+  ---
+  duration_ms: 0.0877
+  type: 'test'
+  ...
+# Subtest: L16 多规则重叠时第一条匹配优先
+ok 34 - L16 多规则重叠时第一条匹配优先
+  ---
+  duration_ms: 0.0763
+  type: 'test'
+  ...
+# Subtest: L17 多选包含任意项与全部项语义
+ok 35 - L17 多选包含任意项与全部项语义
+  ---
+  duration_ms: 0.0516
+  type: 'test'
+  ...
+# Subtest: L18 数字比较边界严格区分大于与大于等于
+ok 36 - L18 数字比较边界严格区分大于与大于等于
+  ---
+  duration_ms: 0.0508
+  type: 'test'
+  ...
+# Subtest: L19 非布尔设置与特殊对象键安全处理
+ok 37 - L19 非布尔设置与特殊对象键安全处理
+  ---
+  duration_ms: 0.1146
+  type: 'test'
+  ...
+# Subtest: L20 表情按Unicode字符计数
+ok 38 - L20 表情按Unicode字符计数
+  ---
+  duration_ms: 0.0666
+  type: 'test'
+  ...
+# Subtest: L21 改选首题仅清理旧分支，保留公共建议答案
+ok 39 - L21 改选首题仅清理旧分支，保留公共建议答案
+  ---
+  duration_ms: 0.1656
+  type: 'test'
+  ...
+# Subtest: L22 改选后新增中间题仍保留公共数字和文本答案
+ok 40 - L22 改选后新增中间题仍保留公共数字和文本答案
+  ---
+  duration_ms: 0.0811
+  type: 'test'
+  ...
+# Subtest: L23 未回答的后续分支保留所有可能经过的答案
+ok 41 - L23 未回答的后续分支保留所有可能经过的答案
+  ---
+  duration_ms: 0.1538
+  type: 'test'
+  ...
+# Subtest: L24 暂时不合法的后续答案不用于提前删去公共题
+ok 42 - L24 暂时不合法的后续答案不用于提前删去公共题
+  ---
+  duration_ms: 0.4423
+  type: 'test'
+  ...
+# Subtest: L25 提前结束时清理路径外答案并保留已访问前缀
+ok 43 - L25 提前结束时清理路径外答案并保留已访问前缀
+  ---
+  duration_ms: 0.0883
+  type: 'test'
+  ...
+1..43
+# tests 43
+# suites 0
+# pass 43
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 8217.5802

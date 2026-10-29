@@ -1,275 +1,518 @@
-
-> mongo-survey-stage1@1.0.0 test
-> node --env-file-if-exists=.env --test --test-concurrency=1 test/*.test.js
-
-.env not found. Continuing without it.
 TAP version 13
 # .env not found. Continuing without it.
 # Subtest: A01 首页、静态文件与MongoDB健康检查
 ok 1 - A01 首页、静态文件与MongoDB健康检查
   ---
-  duration_ms: 213.6261
+  duration_ms: 301.0157
   type: 'test'
   ...
 # Subtest: A02 注册密码哈希、HttpOnly会话与唯一用户名
 ok 2 - A02 注册密码哈希、HttpOnly会话与唯一用户名
   ---
-  duration_ms: 39.2776
+  duration_ms: 41.7772
   type: 'test'
   ...
 # Subtest: A03 登录成功、错误密码与注销失效
 ok 3 - A03 登录成功、错误密码与注销失效
   ---
-  duration_ms: 79.8659
+  duration_ms: 86.8126
   type: 'test'
   ...
 # Subtest: A04 未登录用户禁止创建、列表及填写
 ok 4 - A04 未登录用户禁止创建、列表及填写
   ---
-  duration_ms: 9.8964
+  duration_ms: 11.413
   type: 'test'
   ...
 # Subtest: A05 创建及保存题目、乐观锁防止草稿覆盖
 ok 5 - A05 创建及保存题目、乐观锁防止草稿覆盖
   ---
-  duration_ms: 8.9111
+  duration_ms: 11.2624
   type: 'test'
   ...
 # Subtest: A06 只能查看自己问卷，跨用户读写及统计被拒
 ok 6 - A06 只能查看自己问卷，跨用户读写及统计被拒
   ---
-  duration_ms: 13.315
+  duration_ms: 15.1195
   type: 'test'
   ...
 # Subtest: A07 空问卷与已过截止时间不能发布
 ok 7 - A07 空问卷与已过截止时间不能发布
   ---
-  duration_ms: 10.5957
+  duration_ms: 11.8224
   type: 'test'
   ...
 # Subtest: A08 发布后定义锁定且不泄露匿名盐
 ok 8 - A08 发布后定义锁定且不泄露匿名盐
   ---
-  duration_ms: 8.7119
+  duration_ms: 12.6664
   type: 'test'
   ...
 # Subtest: A09 合法跳转提交真实落库、非法跳过答案拒绝
 ok 9 - A09 合法跳转提交真实落库、非法跳过答案拒绝
   ---
-  duration_ms: 11.9965
+  duration_ms: 16.1858
   type: 'test'
   ...
 # Subtest: A10 匿名回答不保存respondentId，禁止匿名设置生效
 ok 10 - A10 匿名回答不保存respondentId，禁止匿名设置生效
   ---
-  duration_ms: 16.9021
+  duration_ms: 17.5589
   type: 'test'
   ...
 # Subtest: A11 不允许重复时并发8次只保存1份且匿名不能绕过
 ok 11 - A11 不允许重复时并发8次只保存1份且匿名不能绕过
   ---
-  duration_ms: 25.7391
+  duration_ms: 30.3014
   type: 'test'
   ...
 # Subtest: A12 允许重复时同账号可再次提交
 ok 12 - A12 允许重复时同账号可再次提交
   ---
-  duration_ms: 12.1909
+  duration_ms: 13.8523
   type: 'test'
   ...
 # Subtest: A13 截止与关闭问卷拒绝查看及提交，保留统计
 ok 13 - A13 截止与关闭问卷拒绝查看及提交，保留统计
   ---
-  duration_ms: 23.3259
+  duration_ms: 29.8153
   type: 'test'
   ...
 # Subtest: A14 单选、多选、文本和数字平均数统计正确
 ok 14 - A14 单选、多选、文本和数字平均数统计正确
   ---
-  duration_ms: 16.8381
+  duration_ms: 22.704
   type: 'test'
   ...
 # Subtest: A15 版本不符、格式错误与跨域写入被拒
 ok 15 - A15 版本不符、格式错误与跨域写入被拒
   ---
-  duration_ms: 9.3205
+  duration_ms: 11.4714
   type: 'test'
   ...
 # Subtest: A16 多人同时填写互不覆盖且名单计数正确
 ok 16 - A16 多人同时填写互不覆盖且名单计数正确
   ---
-  duration_ms: 50.5015
+  duration_ms: 53.759
   type: 'test'
   ...
 # Subtest: A17 MongoDB集合验证器与唯一索引存在并生效
 ok 17 - A17 MongoDB集合验证器与唯一索引存在并生效
   ---
-  duration_ms: 2.3315
+  duration_ms: 2.2879
   type: 'test'
   ...
 # Subtest: A18 数据库重新连接后已提交数据仍存在
 ok 18 - A18 数据库重新连接后已提交数据仍存在
   ---
-  duration_ms: 21.3609
+  duration_ms: 24.8242
   type: 'test'
   ...
 # .env not found. Continuing without it.
 # Subtest: L01 单选跳转：被跳过的必答题不校验
 ok 19 - L01 单选跳转：被跳过的必答题不校验
   ---
-  duration_ms: 1.5301
+  duration_ms: 1.6757
   type: 'test'
   ...
 # Subtest: L02 多选跳转：AI选项跳过学习方式题
 ok 20 - L02 多选跳转：AI选项跳过学习方式题
   ---
-  duration_ms: 0.2062
+  duration_ms: 0.2263
   type: 'test'
   ...
 # Subtest: L03 数值跳转：达到8小时提前结束
 ok 21 - L03 数值跳转：达到8小时提前结束
   ---
-  duration_ms: 0.1602
+  duration_ms: 0.1916
   type: 'test'
   ...
 # Subtest: L04 未匹配规则时顺序进入下一题
 ok 22 - L04 未匹配规则时顺序进入下一题
   ---
-  duration_ms: 0.5911
+  duration_ms: 0.2316
   type: 'test'
   ...
 # Subtest: L05 拒绝伪造被跳过题目的答案
 ok 23 - L05 拒绝伪造被跳过题目的答案
   ---
-  duration_ms: 0.3444
+  duration_ms: 0.3622
   type: 'test'
   ...
 # Subtest: L06 拒绝遗漏当前路径上的必答题
 ok 24 - L06 拒绝遗漏当前路径上的必答题
   ---
-  duration_ms: 0.1108
+  duration_ms: 0.1161
   type: 'test'
   ...
 # Subtest: L07 拒绝不存在题目的答案
 ok 25 - L07 拒绝不存在题目的答案
   ---
-  duration_ms: 0.1309
+  duration_ms: 0.1388
   type: 'test'
   ...
 # Subtest: L08 单选拒绝不存在的选项
 ok 26 - L08 单选拒绝不存在的选项
   ---
-  duration_ms: 0.0925
+  duration_ms: 0.0964
   type: 'test'
   ...
 # Subtest: L09 多选数量边界与重复选项
 ok 27 - L09 多选数量边界与重复选项
   ---
-  duration_ms: 0.268
+  duration_ms: 0.2991
   type: 'test'
   ...
 # Subtest: L10 多选支持固定选择数量
 ok 28 - L10 多选支持固定选择数量
   ---
-  duration_ms: 0.3052
+  duration_ms: 0.4029
   type: 'test'
   ...
 # Subtest: L11 数值支持范围、整数、有限数检查
 ok 29 - L11 数值支持范围、整数、有限数检查
   ---
-  duration_ms: 0.1893
+  duration_ms: 0.1973
   type: 'test'
   ...
 # Subtest: L12 文本长度与全空格必答校验
 ok 30 - L12 文本长度与全空格必答校验
   ---
-  duration_ms: 0.109
+  duration_ms: 0.1276
   type: 'test'
   ...
 # Subtest: L13 非必答空值不触发最小长度限制
 ok 31 - L13 非必答空值不触发最小长度限制
   ---
-  duration_ms: 0.0533
+  duration_ms: 0.0518
   type: 'test'
   ...
 # Subtest: L14 拒绝后向或不存在目标，防止循环
 ok 32 - L14 拒绝后向或不存在目标，防止循环
   ---
-  duration_ms: 0.075
+  duration_ms: 0.0924
   type: 'test'
   ...
 # Subtest: L15 拒绝冲突的校验范围与重复题目ID
 ok 33 - L15 拒绝冲突的校验范围与重复题目ID
   ---
-  duration_ms: 0.0877
+  duration_ms: 0.1145
   type: 'test'
   ...
 # Subtest: L16 多规则重叠时第一条匹配优先
 ok 34 - L16 多规则重叠时第一条匹配优先
   ---
-  duration_ms: 0.0763
+  duration_ms: 0.0755
   type: 'test'
   ...
 # Subtest: L17 多选包含任意项与全部项语义
 ok 35 - L17 多选包含任意项与全部项语义
   ---
-  duration_ms: 0.0516
+  duration_ms: 0.0635
   type: 'test'
   ...
 # Subtest: L18 数字比较边界严格区分大于与大于等于
 ok 36 - L18 数字比较边界严格区分大于与大于等于
   ---
-  duration_ms: 0.0508
+  duration_ms: 0.0625
   type: 'test'
   ...
 # Subtest: L19 非布尔设置与特殊对象键安全处理
 ok 37 - L19 非布尔设置与特殊对象键安全处理
   ---
-  duration_ms: 0.1146
+  duration_ms: 0.1503
   type: 'test'
   ...
 # Subtest: L20 表情按Unicode字符计数
 ok 38 - L20 表情按Unicode字符计数
   ---
-  duration_ms: 0.0666
+  duration_ms: 0.079
   type: 'test'
   ...
 # Subtest: L21 改选首题仅清理旧分支，保留公共建议答案
 ok 39 - L21 改选首题仅清理旧分支，保留公共建议答案
   ---
-  duration_ms: 0.1656
+  duration_ms: 0.1847
   type: 'test'
   ...
 # Subtest: L22 改选后新增中间题仍保留公共数字和文本答案
 ok 40 - L22 改选后新增中间题仍保留公共数字和文本答案
   ---
-  duration_ms: 0.0811
+  duration_ms: 0.0961
   type: 'test'
   ...
 # Subtest: L23 未回答的后续分支保留所有可能经过的答案
 ok 41 - L23 未回答的后续分支保留所有可能经过的答案
   ---
-  duration_ms: 0.1538
+  duration_ms: 0.5317
   type: 'test'
   ...
 # Subtest: L24 暂时不合法的后续答案不用于提前删去公共题
 ok 42 - L24 暂时不合法的后续答案不用于提前删去公共题
   ---
-  duration_ms: 0.4423
+  duration_ms: 0.1231
   type: 'test'
   ...
 # Subtest: L25 提前结束时清理路径外答案并保留已访问前缀
 ok 43 - L25 提前结束时清理路径外答案并保留已访问前缀
   ---
-  duration_ms: 0.0883
+  duration_ms: 0.0974
   type: 'test'
   ...
-1..43
-# tests 43
+# .env not found. Continuing without it.
+# Subtest: M01 空库迁移与空库预览安全且不创建业务数据
+ok 44 - M01 空库迁移与空库预览安全且不创建业务数据
+  ---
+  duration_ms: 224.8608
+  type: 'test'
+  ...
+# Subtest: M02 dry-run准确预览迁移量且全部集合与原文档完全不变
+ok 45 - M02 dry-run准确预览迁移量且全部集合与原文档完全不变
+  ---
+  duration_ms: 256.9713
+  type: 'test'
+  ...
+# Subtest: M03 正式迁移只补来源，保留ID、规则、状态、时间、revision、匿名与答案
+ok 46 - M03 正式迁移只补来源，保留ID、规则、状态、时间、revision、匿名与答案
+  ---
+  duration_ms: 260.6625
+  type: 'test'
+  ...
+# Subtest: M04 重复运行幂等，不追加版本、重写时间或再次更新回答
+ok 47 - M04 重复运行幂等，不追加版本、重写时间或再次更新回答
+  ---
+  duration_ms: 248.2433
+  type: 'test'
+  ...
+# Subtest: M05 同名问卷和相同局部题ID逐题建独立族，不按标题自动合并
+ok 48 - M05 同名问卷和相同局部题ID逐题建独立族，不按标题自动合并
+  ---
+  duration_ms: 306.7449
+  type: 'test'
+  ...
+# Subtest: M06 建族后问卷尚未关联的中断可续跑，已有版本不重复
+ok 49 - M06 建族后问卷尚未关联的中断可续跑，已有版本不重复
+  ---
+  duration_ms: 250.0917
+  type: 'test'
+  ...
+# Subtest: M07 问卷已补来源但回答未补来源的中断可续跑
+ok 50 - M07 问卷已补来源但回答未补来源的中断可续跑
+  ---
+  duration_ms: 236.341
+  type: 'test'
+  ...
+# Subtest: M08 未迁移旧数据仍可通过原API填写和统计，启动不自动改写旧卷
+ok 51 - M08 未迁移旧数据仍可通过原API填写和统计，启动不自动改写旧卷
+  ---
+  duration_ms: 226.7966
+  type: 'test'
+  ...
+# Subtest: M09 ExtendedJSON备份包含全部集合并保留ObjectId与Date，可供恢复
+ok 52 - M09 ExtendedJSON备份包含全部集合并保留ObjectId与Date，可供恢复
+  ---
+  duration_ms: 258.718
+  type: 'test'
+  ...
+# Subtest: M10 已存在的新式引用保持原版本，仅迁移同卷其他旧题
+ok 53 - M10 已存在的新式引用保持原版本，仅迁移同卷其他旧题
+  ---
+  duration_ms: 243.0229
+  type: 'test'
+  ...
+# Subtest: M11 不完整来源立即拒绝，不把损坏的引用静默覆盖
+ok 54 - M11 不完整来源立即拒绝，不把损坏的引用静默覆盖
+  ---
+  duration_ms: 260.0947
+  type: 'test'
+  ...
+# Subtest: M12 非布尔dryRun参数拒绝，避免误把预览请求执行为迁移
+ok 55 - M12 非布尔dryRun参数拒绝，避免误把预览请求执行为迁移
+  ---
+  duration_ms: 229.9415
+  type: 'test'
+  ...
+# .env not found. Continuing without it.
+# Subtest: S01 题目、题库及导入接口未登录均拒绝
+ok 56 - S01 题目、题库及导入接口未登录均拒绝
+  ---
+  duration_ms: 357.6416
+  type: 'test'
+  ...
+# Subtest: S02 独立保存常用题并规范模板ID与上下文规则
+ok 57 - S02 独立保存常用题并规范模板ID与上下文规则
+  ---
+  duration_ms: 11.3237
+  type: 'test'
+  ...
+# Subtest: S03 无效题型、标题和校验范围拒绝且不产生残留题族
+ok 58 - S03 无效题型、标题和校验范围拒绝且不产生残留题族
+  ---
+  duration_ms: 12.2287
+  type: 'test'
+  ...
+# Subtest: S04 私有题目详情和历史不允许其他用户读取
+ok 59 - S04 私有题目详情和历史不允许其他用户读取
+  ---
+  duration_ms: 7.868
+  type: 'test'
+  ...
+# Subtest: S05 分享后双方使用同一题族，接收者不能改历史或转授
+ok 60 - S05 分享后双方使用同一题族，接收者不能改历史或转授
+  ---
+  duration_ms: 34.5112
+  type: 'test'
+  ...
+# Subtest: S06 未知共享用户名拒绝且不破坏已有授权
+ok 61 - S06 未知共享用户名拒绝且不破坏已有授权
+  ---
+  duration_ms: 16.87
+  type: 'test'
+  ...
+# Subtest: S07 从同一旧版本建立分支，历史按序展示且旧内容不变
+ok 62 - S07 从同一旧版本建立分支，历史按序展示且旧内容不变
+  ---
+  duration_ms: 15.6639
+  type: 'test'
+  ...
+# Subtest: S08 同父并发创建六个版本，唯一序号且不互相覆盖
+ok 63 - S08 同父并发创建六个版本，唯一序号且不互相覆盖
+  ---
+  duration_ms: 32.5589
+  type: 'test'
+  ...
+# Subtest: S09 恢复旧版本生成新版本并保留父版本和恢复来源
+ok 64 - S09 恢复旧版本生成新版本并保留父版本和恢复来源
+  ---
+  duration_ms: 17.9688
+  type: 'test'
+  ...
+# Subtest: S10 版本来源必须属于所选题族
+ok 65 - S10 版本来源必须属于所选题族
+  ---
+  duration_ms: 16.3626
+  type: 'test'
+  ...
+# Subtest: S11 同一保存版本可导入多个问卷并保留独立局部ID
+ok 66 - S11 同一保存版本可导入多个问卷并保留独立局部ID
+  ---
+  duration_ms: 16.7887
+  type: 'test'
+  ...
+# Subtest: S12 导入遵守草稿状态、问卷所有权和乐观锁
+ok 67 - S12 导入遵守草稿状态、问卷所有权和乐观锁
+  ---
+  duration_ms: 22.2063
+  type: 'test'
+  ...
+# Subtest: S13 POST及PUT不能伪造私有来源或修改内容仍保留旧版本身份
+ok 68 - S13 POST及PUT不能伪造私有来源或修改内容仍保留旧版本身份
+  ---
+  duration_ms: 18.8639
+  type: 'test'
+  ...
+# Subtest: S14 不能用残缺来源或同卷重复版本制造错误统计关联
+ok 69 - S14 不能用残缺来源或同卷重复版本制造错误统计关联
+  ---
+  duration_ms: 8.5446
+  type: 'test'
+  ...
+# Subtest: S15 作答来源由服务端快照决定并落库，问卷内统计兼容
+ok 70 - S15 作答来源由服务端快照决定并落库，问卷内统计兼容
+  ---
+  duration_ms: 21.7993
+  type: 'test'
+  ...
+# Subtest: S16 创建新版本不改变已发布快照和已提交回答
+ok 71 - S16 创建新版本不改变已发布快照和已提交回答
+  ---
+  duration_ms: 26.0169
+  type: 'test'
+  ...
+# Subtest: S17 撤销共享后旧发布卷继续可填，新引用与复制被拒
+ok 72 - S17 撤销共享后旧发布卷继续可填，新引用与复制被拒
+  ---
+  duration_ms: 31.3881
+  type: 'test'
+  ...
+# Subtest: S18 撤销共享后原草稿仅可保留同一快照，不能换局部ID复制
+ok 73 - S18 撤销共享后原草稿仅可保留同一快照，不能换局部ID复制
+  ---
+  duration_ms: 31.3222
+  type: 'test'
+  ...
+# Subtest: S19 使用反查仅显示本人问卷，其他问卷只计隐藏数量
+ok 74 - S19 使用反查仅显示本人问卷，其他问卷只计隐藏数量
+  ---
+  duration_ms: 32.6218
+  type: 'test'
+  ...
+# Subtest: S20 跨卷数字统计汇总本人两卷并隔离他人私有答案
+ok 75 - S20 跨卷数字统计汇总本人两卷并隔离他人私有答案
+  ---
+  duration_ms: 51.8837
+  type: 'test'
+  ...
+# Subtest: S21 同族异型版本分别统计，可显式按版本筛选
+ok 76 - S21 同族异型版本分别统计，可显式按版本筛选
+  ---
+  duration_ms: 45.7972
+  type: 'test'
+  ...
+# Subtest: S22 跨卷四题型的计数、原值、平均与数字频数正确
+ok 77 - S22 跨卷四题型的计数、原值、平均与数字频数正确
+  ---
+  duration_ms: 70.9135
+  type: 'test'
+  ...
+# Subtest: S23 可选空题和跳过题不当作数值零参与跨卷平均
+ok 78 - S23 可选空题和跳过题不当作数值零参与跨卷平均
+  ---
+  duration_ms: 26.8402
+  type: 'test'
+  ...
+# Subtest: S24 同标题同局部ID的不同题族不会被错误合并
+ok 79 - S24 同标题同局部ID的不同题族不会被错误合并
+  ---
+  duration_ms: 34.659
+  type: 'test'
+  ...
+# Subtest: S25 题库创建成员管理和乐观锁，目录保持账号隔离
+ok 80 - S25 题库创建成员管理和乐观锁，目录保持账号隔离
+  ---
+  duration_ms: 14.6457
+  type: 'test'
+  ...
+# Subtest: S26 题库成员须可访问且不能重复，禁止越权删除
+ok 81 - S26 题库成员须可访问且不能重复，禁止越权删除
+  ---
+  duration_ms: 18.4124
+  type: 'test'
+  ...
+# Subtest: S27 题库选题后新版显式选用，不自动升级既有问卷
+ok 82 - S27 题库选题后新版显式选用，不自动升级既有问卷
+  ---
+  duration_ms: 47.2993
+  type: 'test'
+  ...
+# Subtest: S28 删除题库不删除题目、问卷、回答及其统计
+ok 83 - S28 删除题库不删除题目、问卷、回答及其统计
+  ---
+  duration_ms: 36.9132
+  type: 'test'
+  ...
+# Subtest: S29 新增集合验证器与族版本唯一索引真实生效
+ok 84 - S29 新增集合验证器与族版本唯一索引真实生效
+  ---
+  duration_ms: 6.2499
+  type: 'test'
+  ...
+1..84
+# tests 84
 # suites 0
-# pass 43
+# pass 84
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 8217.5802
+# duration_ms 5749.3778
